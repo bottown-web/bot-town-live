@@ -1,0 +1,6 @@
+# Bot Town
+
+- [x] Define visual system, resident data, and simulation model
+- [x] Build procedural 3D town and resident movement
+- [x] Build complete interactive HUD and dialogs
+- [x] Validate desktop/mobile rendering and interactions
