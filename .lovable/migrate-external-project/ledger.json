@@ -1,0 +1,18 @@
+{
+  "source": "bot-town-live.zip",
+  "capabilities": [
+    {"capability":"application code","source":"uploaded archive","outcome":"replace changed frontend and simulation files","status":"migrate","next_action":"copy inspected source files and verify"},
+    {"capability":"schema","source":"inspection","outcome":"no database schema detected","status":"absent","next_action":"none"},
+    {"capability":"records","source":"inspection","outcome":"no external records detected; demo residents are bundled in code","status":"absent","next_action":"none"},
+    {"capability":"authentication identities","source":"inspection","outcome":"no authentication detected","status":"absent","next_action":"none"},
+    {"capability":"authorization","source":"inspection","outcome":"no authorization layer detected","status":"absent","next_action":"none"},
+    {"capability":"uploaded file bytes","source":"inspection","outcome":"favicon retained; agent metadata added","status":"migrate","next_action":"copy and verify"},
+    {"capability":"external providers","source":"inspection","outcome":"none detected","status":"absent","next_action":"none"},
+    {"capability":"public endpoints","source":"inspection","outcome":"none detected","status":"absent","next_action":"none"},
+    {"capability":"callbacks and webhooks","source":"inspection","outcome":"none detected","status":"absent","next_action":"none"},
+    {"capability":"schedules","source":"inspection","outcome":"client-side town simulation only","status":"migrate","next_action":"verify continuous simulation"},
+    {"capability":"secrets","source":"inspection","outcome":"no environment variables detected","status":"absent","next_action":"none"},
+    {"capability":"cutover","source":"uploaded archive","outcome":"replace current app implementation in place","status":"pending","next_action":"verify preview"},
+    {"capability":"verification","source":"uploaded archive","outcome":"not yet run","status":"pending","next_action":"test desktop and mobile interactions"}
+  ]
+}
