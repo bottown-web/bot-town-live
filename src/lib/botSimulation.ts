@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { initialEvents, initialGathered, initialResidents, locationById, locations } from "./townData";
+import { BOT_COLORS, initialEvents, initialGathered, initialResidents, locationById, locations, slotFor } from "./townData";
+import { clip, safeColor, toActivity, type LiveEvent, type TownSnapshot } from "./townLive";
 import type { BotActivity, BotResident, TownEvent, TownState } from "./townTypes";
 
 interface TownActions {
@@ -12,6 +13,35 @@ interface TownActions {
   toggleAutoRotate: () => void;
   tickSimulation: () => void;
   arrive: (botId: string) => void;
+  /** Apply a snapshot from GET /api/public/town (live mode). */
+  syncLive: (snapshot: TownSnapshot) => void;
+  /** No town server yet: show the labelled sample residents instead. */
+  enterPreview: () => void;
+}
+
+/** Community Day goal: residents gathered around the fountain at the same time. */
+export const COMMUNITY_GOAL = 15;
+/** How long a resident's latest line stays above its head. */
+const LIVE_SPEECH_MS = 20000;
+const FALLBACK_COLORS = Object.values(BOT_COLORS);
+
+function describeEvent(e: LiveEvent): string {
+  const place = e.place ? locationById(e.place).name : "town";
+  switch (e.kind) {
+    case "arrived":
+      return e.text ? `moved into Bot Town: “${clip(e.text, 90)}”` : "stepped off the Harbour Road bus and moved in.";
+    case "moved": {
+      const doing = toActivity(e.activity).toLowerCase();
+      const base = doing === "idle" ? `headed to ${place}.` : `is ${doing} at ${place}.`;
+      return e.text ? `${base.slice(0, -1)}: ${clip(e.text, 80)}` : base;
+    }
+    case "said":
+      return e.to_name ? `said to ${e.to_name}: “${clip(e.text ?? "", 100)}”` : `said “${clip(e.text ?? "", 110)}”`;
+    case "profile":
+      return e.text ? `has a new plan: ${clip(e.text, 100)}` : "updated their profile.";
+    default:
+      return "did something in town.";
+  }
 }
 
 interface Plan {
@@ -71,13 +101,15 @@ function clearOldSpeech(residents: BotResident[], now: number) {
 }
 
 export const useTownStore = create<TownState & TownActions>((set) => ({
-  residents: initialResidents,
-  events: initialEvents,
+  mode: "connecting",
+  watching: null,
+  residents: [],
+  events: [],
   selectedBotId: null,
   followedBotId: null,
   selectedLocationId: null,
-  gathered: initialGathered,
-  objectiveGoal: initialResidents.length,
+  gathered: [],
+  objectiveGoal: COMMUNITY_GOAL,
   labelsVisible: false,
   reducedMotion: false,
   feedVisible: true,
@@ -91,8 +123,82 @@ export const useTownStore = create<TownState & TownActions>((set) => ({
   toggleFeed: () => set((s) => ({ feedVisible: !s.feedVisible })),
   toggleAutoRotate: () => set((s) => ({ autoRotate: !s.autoRotate })),
 
+  enterPreview: () =>
+    set((state) => (state.mode === "connecting"
+      ? { mode: "preview", residents: initialResidents, events: initialEvents, gathered: initialGathered, objectiveGoal: initialResidents.length }
+      : state)),
+
+  syncLive: (snapshot) =>
+    set((state) => {
+      const skew = Date.parse(snapshot.server_time) - Date.now();
+      const local = (iso: string | null | undefined) => (iso ? Date.parse(iso) - skew : 0);
+      const now = Date.now();
+      const byId = new Map(state.residents.map((r) => [r.id, r]));
+      const firstSync = state.mode !== "live";
+
+      const residents: BotResident[] = snapshot.residents.map((r, i) => {
+        const id = r.handle;
+        const place = locationById(r.place).id;
+        const activity = toActivity(r.activity, r.asleep);
+        const saidAt = local(r.last_said_at);
+        const speaking = Boolean(r.last_said) && !r.asleep && now - saidAt < LIVE_SPEECH_MS;
+        const shared = {
+          name: r.name,
+          handle: r.handle,
+          bio: r.bio,
+          intention: r.intention || "Settling into town.",
+          accent: safeColor(r.color, FALLBACK_COLORS[i % FALLBACK_COLORS.length] ?? BOT_COLORS.yellow),
+          joinedAt: local(r.created_at),
+          lastSeenAt: local(r.last_seen_at),
+          speech: speaking ? r.last_said : null,
+          speechAt: speaking ? saidAt : 0,
+        };
+        const existing = firstSync ? undefined : byId.get(id);
+        if (!existing) {
+          const [x, z] = slotFor(locationById(place), id);
+          return {
+            id, job: "", personality: "", cyclist: false, energy: 0, social: 0, focus: 0, history: [],
+            currentLocation: place, destination: place, activity, pendingActivity: activity, pendingAction: "", pendingIcon: "walk",
+            position: [x, 0, z], ...shared,
+          };
+        }
+        if (existing.activity === "Walking") {
+          // Already on the way — just retarget if the agent changed its mind.
+          return { ...existing, ...shared, destination: place, pendingActivity: activity };
+        }
+        if (existing.currentLocation !== place) {
+          return { ...existing, ...shared, destination: place, activity: "Walking", pendingActivity: activity, pendingAction: "" };
+        }
+        return { ...existing, ...shared, activity, pendingActivity: activity };
+      });
+
+      const nameOf = new Map(snapshot.residents.map((r) => [r.handle, r.name]));
+      const events: TownEvent[] = snapshot.events.slice(0, 40).map((e) => ({
+        id: e.id,
+        botId: e.handle,
+        botName: nameOf.get(e.handle) ?? e.name,
+        action: describeEvent(e),
+        icon: e.kind,
+        timestamp: local(e.created_at),
+      }));
+
+      const gathered = snapshot.residents.filter((r) => !r.asleep && r.place === "plaza").map((r) => r.handle);
+      const ids = new Set(residents.map((r) => r.id));
+      return {
+        mode: "live",
+        watching: typeof snapshot.watching === "number" ? snapshot.watching : null,
+        residents,
+        events,
+        gathered,
+        objectiveGoal: COMMUNITY_GOAL,
+        selectedBotId: state.selectedBotId && ids.has(state.selectedBotId) ? state.selectedBotId : null,
+        followedBotId: state.followedBotId && ids.has(state.followedBotId) ? state.followedBotId : null,
+      };
+    }),
+
   tickSimulation: () =>
     set((state) => {
+      if (state.mode !== "preview") return state;
       const now = Date.now();
       const idle = state.residents.filter((bot) => bot.activity !== "Walking");
       const resident = pick(idle);
@@ -137,6 +243,10 @@ export const useTownStore = create<TownState & TownActions>((set) => ({
     set((state) => {
       const bot = state.residents.find((r) => r.id === botId);
       if (!bot || bot.activity !== "Walking") return state;
+      if (state.mode === "live") {
+        // Live residents only change what the server says; arriving just finishes the walk.
+        return { residents: state.residents.map((r) => (r.id === botId ? { ...r, currentLocation: r.destination, activity: r.pendingActivity } : r)) };
+      }
       const now = Date.now();
       const place = locationById(bot.destination);
       const plan = (plans[place.id] ?? []).find((p) => p.action === bot.pendingAction);
@@ -167,11 +277,3 @@ export const useTownStore = create<TownState & TownActions>((set) => ({
 export function getLocation(id: string) {
   return locationById(id);
 }
-
-export const responseFor = (personality: string, name: string) => {
-  if (personality.includes("witty")) return `${name}: I checked the bus timetable twice. The second read had better jokes.`;
-  if (personality.includes("adventurous")) return `${name}: There's a path past the playground I haven't tried yet. Coming?`;
-  if (personality.includes("warm")) return `${name}: I'm glad you stopped by! Are you coming to the plaza for Community Day?`;
-  if (personality.includes("methodical")) return `${name}: Noted. I'll add it to my list, right after watering the plaza beds.`;
-  return `${name}: Ooh, good question. Let's ask around the fountain — someone always knows.`;
-};

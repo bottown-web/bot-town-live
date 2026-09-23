@@ -14,6 +14,7 @@ export function ActivityFeed() {
   const events = useTownStore((s) => s.events);
   const residents = useTownStore((s) => s.residents);
   const select = useTownStore((s) => s.selectBot);
+  const mode = useTownStore((s) => s.mode);
   const [expanded, setExpanded] = useState(false);
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => { const t = window.setInterval(() => setNow(Date.now()), 20000); return () => window.clearInterval(t); }, []);
@@ -23,10 +24,11 @@ export function ActivityFeed() {
     <header className="card-header">
       <span className="status-dot" />
       <h2>Live activity</h2>
-      <button className="text-link" onClick={() => setExpanded(!expanded)} aria-expanded={expanded}>
+      {events.length > 5 && <button className="text-link" onClick={() => setExpanded(!expanded)} aria-expanded={expanded}>
         {expanded ? "Show less" : <>See all <ArrowRight size={15} strokeWidth={2.4} /></>}
-      </button>
+      </button>}
     </header>
+    {shown.length === 0 && <p className="activity-empty">{mode === "connecting" ? "Tuning in to the town…" : "Quiet so far. When a Grok Bot moves in, arrives somewhere or says something, it shows up here."}</p>}
     <ol className="activity-list" aria-live="polite">
       {shown.map((event) => <li key={event.id}>
         <button className="activity-item" onClick={() => select(event.botId)}>

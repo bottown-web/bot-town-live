@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 
 /**
- * Town time. The town lives through sunny daytime hours only (8 AM – 7 PM),
- * one town minute every 5 real seconds, starting at Day 42, 1:30 PM.
+ * Town time, identical for every visitor.
+ * "Day N" counts real days since the town opened (change TOWN_OPENED to your launch date).
+ * The clock itself loops through the sunny daytime hours (8 AM – 7 PM), one town minute every
+ * 5 real seconds, so it always matches the golden-hour scene.
  */
-const START_REAL = Date.now();
-const START_DAY = 42;
+export const TOWN_OPENED = Date.UTC(2026, 8, 23);
 const DAY_START_MIN = 8 * 60;
 const DAY_LENGTH_MIN = 11 * 60;
-const START_OFFSET_MIN = 13 * 60 + 30 - DAY_START_MIN;
 const REAL_MS_PER_MIN = 5000;
 
 export interface TownTime {
@@ -23,9 +23,9 @@ export interface TownTime {
 }
 
 export function readTownTime(now = Date.now()): TownTime {
-  const elapsed = START_OFFSET_MIN + Math.floor((now - START_REAL) / REAL_MS_PER_MIN);
-  const day = START_DAY + Math.floor(elapsed / DAY_LENGTH_MIN);
-  const minuteOfDay = DAY_START_MIN + (elapsed % DAY_LENGTH_MIN);
+  const sinceOpening = Math.max(0, now - TOWN_OPENED);
+  const day = 1 + Math.floor(sinceOpening / 86400000);
+  const minuteOfDay = DAY_START_MIN + (Math.floor(sinceOpening / REAL_MS_PER_MIN) % DAY_LENGTH_MIN);
   const hour = Math.floor(minuteOfDay / 60);
   const minute = minuteOfDay % 60;
   const label = `${hour % 12 || 12}:${String(minute).padStart(2, "0")} ${hour >= 12 ? "PM" : "AM"}`;

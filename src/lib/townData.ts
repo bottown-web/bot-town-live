@@ -192,7 +192,11 @@ export function slotFor(location: TownLocation, botId: string): GroundPoint {
   }
   if (location.slots.length === 0) return location.anchor;
   const slot = location.slots[h % location.slots.length] ?? [0, 0];
-  return [location.anchor[0] + slot[0], location.anchor[1] + slot[1]];
+  // Park residents sit exactly on the benches; elsewhere a small nudge keeps a crowd from stacking up.
+  const jitter = location.kind === "park" ? 0 : 0.18;
+  const jx = ((((h >>> 11) % 7) - 3) * jitter);
+  const jz = ((((h >>> 17) % 5) - 2) * jitter);
+  return [location.anchor[0] + slot[0] + jx, location.anchor[1] + slot[1] + jz];
 }
 
 export function ringPoint(angleDeg: number): GroundPoint {

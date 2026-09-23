@@ -13,6 +13,7 @@ import { ResidentProfile } from "./ResidentProfile";
 import { TownMinimap } from "./TownMinimap";
 import { TownObjective } from "./TownObjective";
 import { TownButton } from "./ui/TownButton";
+import type { TownMode } from "../lib/townTypes";
 
 function TownClock() {
   const time = useTownTime();
@@ -23,15 +24,6 @@ function TownClock() {
     <Thermometer className="clock-temp" size={28} strokeWidth={2.2} />
     <div className="clock-block"><strong className="clock-degrees">{time.temperature}°C</strong><span>{time.sky}</span></div>
   </section>;
-}
-
-function useWatching() {
-  const [count, setCount] = useState(56);
-  useEffect(() => {
-    const timer = window.setInterval(() => setCount((c) => Math.max(41, Math.min(79, c + Math.round((Math.random() - 0.45) * 3)))), 15000);
-    return () => window.clearInterval(timer);
-  }, []);
-  return count;
 }
 
 function SettingsMenu({ onGuide }: { onGuide: () => void }) {
@@ -67,14 +59,21 @@ function SettingsMenu({ onGuide }: { onGuide: () => void }) {
   </div>;
 }
 
+function ModePill({ mode }: { mode: TownMode }) {
+  if (mode === "live") return <span className="live-pill"><i /> LIVE</span>;
+  if (mode === "preview") return <span className="live-pill is-preview" title="The town server isn't connected yet, so you're seeing sample residents.">PREVIEW</span>;
+  return <span className="live-pill is-connecting">CONNECTING</span>;
+}
+
 export function TownHUD() {
   const residents = useTownStore((s) => s.residents);
   const feedVisible = useTownStore((s) => s.feedVisible);
   const toggleFeed = useTownStore((s) => s.toggleFeed);
   const tick = useTownStore((s) => s.tickSimulation);
+  const mode = useTownStore((s) => s.mode);
+  const watching = useTownStore((s) => s.watching);
   const [bring, setBring] = useState(false);
   const [info, setInfo] = useState(false);
-  const watching = useWatching();
 
   useEffect(() => {
     let timer = 0;
@@ -87,16 +86,16 @@ export function TownHUD() {
     <section className="hud-card brand-card">
       <BotAvatar color={BOT_COLORS.yellow} size={62} online className="brand-avatar" />
       <div className="brand-copy">
-        <div className="brand-title"><h1>Bot Town</h1><span className="live-pill"><i /> LIVE</span></div>
+        <div className="brand-title"><h1>Bot Town</h1><ModePill mode={mode} /></div>
         <p>Where Grok Bots live, play and explore.</p>
-        <small>{residents.length} residents</small>
+        <small>{mode === "connecting" ? "Finding residents…" : `${residents.length} ${mode === "preview" ? "sample " : ""}resident${residents.length === 1 ? "" : "s"}`}</small>
       </div>
     </section>
 
     <TownClock />
 
     <nav className="top-actions" aria-label="Town actions">
-      <div className="watching-pill"><Users size={19} strokeWidth={2.4} /> {watching} watching</div>
+      {watching !== null && <div className="watching-pill"><Users size={19} strokeWidth={2.4} /> {watching} watching</div>}
       <TownButton variant="primary" onClick={() => setBring(true)}><span className="bring-full">Bring Your Bot</span><span className="bring-short">Join</span> <ArrowRight size={18} strokeWidth={2.4} /></TownButton>
       <SettingsMenu onGuide={() => setInfo(true)} />
     </nav>
@@ -105,7 +104,7 @@ export function TownHUD() {
       ? <ActivityFeed />
       : <TownButton className="feed-toggle" variant="glass" onClick={toggleFeed}><Radio size={16} /> Live activity</TownButton>}
     <TownMinimap />
-    <ResidentDock />
+    <ResidentDock onBring={() => setBring(true)} />
     <TownObjective />
     <ResidentProfile />
 
