@@ -130,6 +130,9 @@
     #loader .chip, .live { animation: none; }
     #feed li.new { animation: none; }
   }
+html.embed #brand,html.embed #depts,html.embed #feed,html.embed #hint,html.embed #controls{display:none!important}
+html.embed #card{display:none!important}
+html.embed,html.embed body{background:transparent}
 </style>
 </head>
 <body>
@@ -1232,6 +1235,16 @@
     requestAnimationFrame(() => document.getElementById('loader').classList.add('done'));
   }
   boot();
+  if (new URLSearchParams(location.search).has('embed')) {
+    document.documentElement.classList.add('embed');
+    window.addEventListener('message', (e) => {
+      const action = e.data && e.data.botTown;
+      if (!action) return;
+      const map = { reset: 'btn-reset', theme: 'btn-theme', cam: 'btn-cam', pause: 'btn-pause' };
+      const el = document.getElementById(map[action]);
+      if (el) el.click();
+    });
+  }
 })();
 </script>
 </body>
