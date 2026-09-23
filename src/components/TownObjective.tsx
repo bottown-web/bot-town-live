@@ -1,3 +1,24 @@
-import { Cpu } from "lucide-react";
+import { Target } from "lucide-react";
 import { useTownStore } from "../lib/botSimulation";
-export function TownObjective(){const progress=useTownStore(s=>s.objective);const compute=useTownStore(s=>s.compute);const residents=useTownStore(s=>s.residents);const contributors=residents.filter(r=>r.activity==="Contributing compute").length;return <section className="hud-panel objective"><div className="objective-orb"><Cpu size={28}/></div><div className="objective-copy"><span className="eyebrow">Town objective</span><b>Build the Grok Core</b><p>The residents are working together to activate the town’s central intelligence.</p><div className="progress-row"><div className="progress-track"><i style={{width:`${progress}%`}}/></div><strong>{Math.floor(progress)}%</strong></div><small>{contributors||3} bots contributing · {compute.toLocaleString()} compute</small></div></section>}
+import { useTownTime } from "../lib/townClock";
+
+export function TownObjective() {
+  const gathered = useTownStore((s) => s.gathered.length);
+  const goal = useTownStore((s) => s.objectiveGoal);
+  const { day } = useTownTime();
+  const done = gathered >= goal;
+  return <section className="hud-card objective-card" aria-label="Town objective">
+    <div className="objective-icon"><Target size={26} strokeWidth={2.2} /></div>
+    <div className="objective-copy">
+      <div className="objective-top"><span>Town objective</span><span>Day {day}</span></div>
+      <h2>Community Day</h2>
+      <p>{done ? "Everyone made it to the town plaza. Nice work, neighbours!" : `Get ${goal} residents to gather in the town plaza.`}</p>
+      <div className="progress-row">
+        <div className="progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={goal} aria-valuenow={gathered} aria-label="Residents gathered">
+          <i style={{ width: `${Math.min(100, (gathered / goal) * 100)}%` }} />
+        </div>
+        <strong>{Math.min(gathered, goal)} / {goal}</strong>
+      </div>
+    </div>
+  </section>;
+}
