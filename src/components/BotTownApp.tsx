@@ -1,3 +1,12 @@
-import { BotTownScene } from "./BotTownScene";
-import { TownHUD } from "./TownHUD";
-export function BotTownApp(){return <main className="bot-town"><div className="scene-layer"><BotTownScene/></div><TownHUD/></main>}
+export function BotTownApp() {
+  return (
+    <main className="bot-town bot-town-uploaded">
+      <iframe
+        className="uploaded-town-frame"
+        src="/bot-town.html"
+        title="Bot Town interactive 3D town"
+        allow="fullscreen"
+      />
+    </main>
+  );
+}
