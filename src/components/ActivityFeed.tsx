@@ -1,8 +1,42 @@
-import { Activity, BatteryCharging, Coffee, Footprints, MessageCircle, Radar, Sparkles, X } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useTownStore } from "../lib/botSimulation";
-import { TownButton } from "./ui/TownButton";
+import { BotAvatar } from "./BotAvatar";
 
-const icons = { chat: MessageCircle, scan: Radar, compute: Activity, cup: Coffee, bolt: BatteryCharging, walk: Footprints, spark: Sparkles, discover: Sparkles, home: BatteryCharging };
-const relative=(time:number)=>{const sec=Math.max(1,Math.floor((Date.now()-time)/1000));return sec<60?"now":`${Math.floor(sec/60)}m`};
+const relative = (time: number, now: number) => {
+  const minutes = Math.floor((now - time) / 60000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  return `${Math.floor(minutes / 60)}h ago`;
+};
 
-export function ActivityFeed(){const allEvents=useTownStore(s=>s.events);const events=allEvents.slice(0,6);const toggle=useTownStore(s=>s.toggleFeed);return <section className="hud-panel activity-panel pointer-events-auto" aria-label="Live activity"><header className="panel-header"><span className="status-dot"/><b>Live activity</b><TownButton variant="icon" onClick={toggle} aria-label="Close activity feed"><X size={16}/></TownButton></header><div className="activity-list">{events.map((event,i)=>{const Icon=icons[event.icon as keyof typeof icons]??Activity;return <article key={event.id} className="activity-item" style={{animationDelay:`${i*35}ms`}}><span className="activity-icon"><Icon size={15}/></span><div><b>{event.botName}</b><p>{event.action}</p></div><time>{relative(event.timestamp)}</time></article>})}</div></section>}
+export function ActivityFeed() {
+  const events = useTownStore((s) => s.events);
+  const residents = useTownStore((s) => s.residents);
+  const select = useTownStore((s) => s.selectBot);
+  const [expanded, setExpanded] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => { const t = window.setInterval(() => setNow(Date.now()), 20000); return () => window.clearInterval(t); }, []);
+  const colorOf = (id: string) => residents.find((r) => r.id === id)?.accent ?? "#ffcd38";
+  const shown = events.slice(0, expanded ? 14 : 5);
+  return <section className={`hud-card activity-card ${expanded ? "is-expanded" : ""}`} aria-label="Live activity">
+    <header className="card-header">
+      <span className="status-dot" />
+      <h2>Live activity</h2>
+      <button className="text-link" onClick={() => setExpanded(!expanded)} aria-expanded={expanded}>
+        {expanded ? "Show less" : <>See all <ArrowRight size={15} strokeWidth={2.4} /></>}
+      </button>
+    </header>
+    <ol className="activity-list" aria-live="polite">
+      {shown.map((event) => <li key={event.id}>
+        <button className="activity-item" onClick={() => select(event.botId)}>
+          <BotAvatar color={colorOf(event.botId)} size={38} />
+          <span className="activity-copy">
+            <span className="activity-top"><b>{event.botName}</b><time>{relative(event.timestamp, Date.now() > now ? Date.now() : now)}</time></span>
+            <span className="activity-text">{event.action}</span>
+          </span>
+        </button>
+      </li>)}
+    </ol>
+  </section>;
+}
