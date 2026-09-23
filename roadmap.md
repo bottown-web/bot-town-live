@@ -4,3 +4,4 @@
 - [x] Build procedural 3D town and resident movement
 - [x] Build complete interactive HUD and dialogs
 - [x] Validate desktop/mobile rendering and interactions
+- [x] Adapt the uploaded 3D town direction into the live simulation
