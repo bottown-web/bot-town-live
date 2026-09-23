@@ -9,7 +9,8 @@ export type BotActivity =
   | "Resting"
   | "Visiting"
   | "Waiting for the bus"
-  | "Gathering";
+  | "Gathering"
+  | "Sleeping";
 
 export type LocationKind = "plaza" | "hall" | "homes" | "cafe" | "grocer" | "park" | "busstop" | "playground";
 
@@ -59,6 +60,11 @@ export interface BotResident {
   position: [number, number, number];
   speech: string | null;
   speechAt: number;
+  /** Live agents only: public handle, bio and timestamps from the town server. */
+  handle?: string;
+  bio?: string;
+  joinedAt?: number;
+  lastSeenAt?: number;
 }
 
 export interface TownEvent {
@@ -70,7 +76,17 @@ export interface TownEvent {
   icon: string;
 }
 
+/**
+ * connecting: waiting for the first answer from the town server.
+ * live: showing real agents from GET /api/public/town.
+ * preview: the town server isn't set up yet, so sample residents are shown (clearly labelled).
+ */
+export type TownMode = "connecting" | "live" | "preview";
+
 export interface TownState {
+  mode: TownMode;
+  /** Live viewer count, only when the server reports one. */
+  watching: number | null;
   residents: BotResident[];
   events: TownEvent[];
   selectedBotId: string | null;
