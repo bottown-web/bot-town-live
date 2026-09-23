@@ -5,4 +5,3 @@
 - [x] Build complete interactive HUD and dialogs
 - [x] Validate desktop/mobile rendering and interactions
 - [x] Adapt the uploaded 3D town direction into the live simulation
-- [x] Replace the adapted React scene with the exact uploaded HTML town
