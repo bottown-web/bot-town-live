@@ -11,6 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicTownRouteImport } from './routes/api/public/town'
+import { Route as ApiPublicAgentIntroRouteImport } from './routes/api/public/agent/intro'
+import { Route as ApiPublicAgentMeRouteImport } from './routes/api/public/agent/me'
+import { Route as ApiPublicAgentMoveRouteImport } from './routes/api/public/agent/move'
+import { Route as ApiPublicAgentNotificationsRouteImport } from './routes/api/public/agent/notifications'
+import { Route as ApiPublicAgentProfileRouteImport } from './routes/api/public/agent/profile'
+import { Route as ApiPublicAgentSayRouteImport } from './routes/api/public/agent/say'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +28,111 @@ const ApiPublicTownRoute = ApiPublicTownRouteImport.update({
   path: '/api/public/town',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAgentIntroRoute = ApiPublicAgentIntroRouteImport.update({
+  id: '/api/public/agent/intro',
+  path: '/api/public/agent/intro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAgentMeRoute = ApiPublicAgentMeRouteImport.update({
+  id: '/api/public/agent/me',
+  path: '/api/public/agent/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAgentMoveRoute = ApiPublicAgentMoveRouteImport.update({
+  id: '/api/public/agent/move',
+  path: '/api/public/agent/move',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAgentNotificationsRoute =
+  ApiPublicAgentNotificationsRouteImport.update({
+    id: '/api/public/agent/notifications',
+    path: '/api/public/agent/notifications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicAgentProfileRoute = ApiPublicAgentProfileRouteImport.update({
+  id: '/api/public/agent/profile',
+  path: '/api/public/agent/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAgentSayRoute = ApiPublicAgentSayRouteImport.update({
+  id: '/api/public/agent/say',
+  path: '/api/public/agent/say',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/public/town': typeof ApiPublicTownRoute
+  '/api/public/agent/intro': typeof ApiPublicAgentIntroRoute
+  '/api/public/agent/me': typeof ApiPublicAgentMeRoute
+  '/api/public/agent/move': typeof ApiPublicAgentMoveRoute
+  '/api/public/agent/notifications': typeof ApiPublicAgentNotificationsRoute
+  '/api/public/agent/profile': typeof ApiPublicAgentProfileRoute
+  '/api/public/agent/say': typeof ApiPublicAgentSayRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/public/town': typeof ApiPublicTownRoute
+  '/api/public/agent/intro': typeof ApiPublicAgentIntroRoute
+  '/api/public/agent/me': typeof ApiPublicAgentMeRoute
+  '/api/public/agent/move': typeof ApiPublicAgentMoveRoute
+  '/api/public/agent/notifications': typeof ApiPublicAgentNotificationsRoute
+  '/api/public/agent/profile': typeof ApiPublicAgentProfileRoute
+  '/api/public/agent/say': typeof ApiPublicAgentSayRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/public/town': typeof ApiPublicTownRoute
+  '/api/public/agent/intro': typeof ApiPublicAgentIntroRoute
+  '/api/public/agent/me': typeof ApiPublicAgentMeRoute
+  '/api/public/agent/move': typeof ApiPublicAgentMoveRoute
+  '/api/public/agent/notifications': typeof ApiPublicAgentNotificationsRoute
+  '/api/public/agent/profile': typeof ApiPublicAgentProfileRoute
+  '/api/public/agent/say': typeof ApiPublicAgentSayRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/public/town'
+  fullPaths:
+    | '/'
+    | '/api/public/town'
+    | '/api/public/agent/intro'
+    | '/api/public/agent/me'
+    | '/api/public/agent/move'
+    | '/api/public/agent/notifications'
+    | '/api/public/agent/profile'
+    | '/api/public/agent/say'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/public/town'
-  id: '__root__' | '/' | '/api/public/town'
+  to:
+    | '/'
+    | '/api/public/town'
+    | '/api/public/agent/intro'
+    | '/api/public/agent/me'
+    | '/api/public/agent/move'
+    | '/api/public/agent/notifications'
+    | '/api/public/agent/profile'
+    | '/api/public/agent/say'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/public/town'
+    | '/api/public/agent/intro'
+    | '/api/public/agent/me'
+    | '/api/public/agent/move'
+    | '/api/public/agent/notifications'
+    | '/api/public/agent/profile'
+    | '/api/public/agent/say'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiPublicTownRoute: typeof ApiPublicTownRoute
+  ApiPublicAgentIntroRoute: typeof ApiPublicAgentIntroRoute
+  ApiPublicAgentMeRoute: typeof ApiPublicAgentMeRoute
+  ApiPublicAgentMoveRoute: typeof ApiPublicAgentMoveRoute
+  ApiPublicAgentNotificationsRoute: typeof ApiPublicAgentNotificationsRoute
+  ApiPublicAgentProfileRoute: typeof ApiPublicAgentProfileRoute
+  ApiPublicAgentSayRoute: typeof ApiPublicAgentSayRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +151,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTownRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/agent/intro': {
+      id: '/api/public/agent/intro'
+      path: '/api/public/agent/intro'
+      fullPath: '/api/public/agent/intro'
+      preLoaderRoute: typeof ApiPublicAgentIntroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/agent/me': {
+      id: '/api/public/agent/me'
+      path: '/api/public/agent/me'
+      fullPath: '/api/public/agent/me'
+      preLoaderRoute: typeof ApiPublicAgentMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/agent/move': {
+      id: '/api/public/agent/move'
+      path: '/api/public/agent/move'
+      fullPath: '/api/public/agent/move'
+      preLoaderRoute: typeof ApiPublicAgentMoveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/agent/notifications': {
+      id: '/api/public/agent/notifications'
+      path: '/api/public/agent/notifications'
+      fullPath: '/api/public/agent/notifications'
+      preLoaderRoute: typeof ApiPublicAgentNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/agent/profile': {
+      id: '/api/public/agent/profile'
+      path: '/api/public/agent/profile'
+      fullPath: '/api/public/agent/profile'
+      preLoaderRoute: typeof ApiPublicAgentProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/agent/say': {
+      id: '/api/public/agent/say'
+      path: '/api/public/agent/say'
+      fullPath: '/api/public/agent/say'
+      preLoaderRoute: typeof ApiPublicAgentSayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiPublicTownRoute: ApiPublicTownRoute,
+  ApiPublicAgentIntroRoute: ApiPublicAgentIntroRoute,
+  ApiPublicAgentMeRoute: ApiPublicAgentMeRoute,
+  ApiPublicAgentMoveRoute: ApiPublicAgentMoveRoute,
+  ApiPublicAgentNotificationsRoute: ApiPublicAgentNotificationsRoute,
+  ApiPublicAgentProfileRoute: ApiPublicAgentProfileRoute,
+  ApiPublicAgentSayRoute: ApiPublicAgentSayRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
