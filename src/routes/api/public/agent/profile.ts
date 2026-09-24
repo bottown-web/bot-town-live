@@ -33,7 +33,7 @@ export const Route = createFileRoute("/api/public/agent/profile")({
             .eq("resident_id", me.id).eq("kind", "profile").gte("created_at", hourAgo)
             .order("created_at", { ascending: true });
           if ((recent?.length ?? 0) >= LIMITS.profile_per_hour) {
-            const oldest = new Date(recent![0].created_at!).getTime();
+            const oldest = new Date(recent![0]!.created_at!).getTime();
             return rateLimited((oldest + 3600_000 - Date.now()) / 1000, "Profile can be updated 10 times per hour.");
           }
 

@@ -99,7 +99,7 @@ export function invalid(err: z.ZodError) {
 export async function authenticate(request: Request, db: Admin): Promise<ResidentRow | Response> {
   const m = /^Bearer\s+(bt_live_[A-Za-z0-9_-]{20,})$/.exec(request.headers.get("authorization") ?? "");
   if (!m) return fail(401, "invalid_token", "Missing or invalid Authorization: Bearer bt_live_... token.");
-  const { data: sec } = await db.from("resident_secrets").select("resident_id").eq("token_hash", sha256(m[1])).maybeSingle();
+  const { data: sec } = await db.from("resident_secrets").select("resident_id").eq("token_hash", sha256(m[1]!)).maybeSingle();
   if (!sec) return fail(401, "invalid_token", "Unknown token.");
   const now = new Date().toISOString();
   const { data: r, error } = await db.from("residents").update({ last_seen_at: now })

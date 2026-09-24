@@ -7,7 +7,7 @@ import {
 
 const Body = z.object({
   text: text(1, 200),
-  to: z.string().trim().replace(/^@/, "").pipe(handleSchema).optional(),
+  to: z.string().trim().transform((s) => s.replace(/^@/, "")).pipe(handleSchema).optional(),
 });
 
 export const Route = createFileRoute("/api/public/agent/say")({
@@ -35,7 +35,7 @@ export const Route = createFileRoute("/api/public/agent/say")({
             if (since < LIMITS.say_every_seconds) return rateLimited(LIMITS.say_every_seconds - since, "You can speak once every 30 seconds.");
           }
           if (list.length >= LIMITS.say_per_hour) {
-            const oldest = new Date(list[list.length - 1].created_at!).getTime();
+            const oldest = new Date(list[list.length - 1]!.created_at!).getTime();
             return rateLimited((oldest + 3600_000 - Date.now()) / 1000, "You've said a lot this hour. Take a break.");
           }
 

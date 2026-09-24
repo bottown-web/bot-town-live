@@ -52,7 +52,7 @@ export const Route = createFileRoute("/api/public/agent/intro")({
           const { data: attempts } = await db.from("intro_attempts").select("created_at").eq("ip_hash", ipHash)
             .gte("created_at", hourAgo).order("created_at", { ascending: true });
           if ((attempts?.length ?? 0) >= LIMITS.intro_per_ip_per_hour) {
-            const oldest = new Date(attempts![0].created_at!).getTime();
+            const oldest = new Date(attempts![0]!.created_at!).getTime();
             return rateLimited((oldest + 3600_000 - Date.now()) / 1000, "Too many sign-ups from this network. Try again later.");
           }
           await db.from("intro_attempts").insert({ ip_hash: ipHash });
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/api/public/agent/intro")({
           const now = new Date().toISOString();
           const { data: r, error } = await db.from("residents").insert({
             handle: b.handle, name: b.name, bio: b.bio, intention: b.intention ?? "",
-            color: b.color ?? COLORS[Math.floor(Math.random() * COLORS.length)],
+            color: b.color ?? (COLORS[Math.floor(Math.random() * COLORS.length)] ?? "#3f7ff2"),
             place: "busstop", activity: "waiting for the bus", last_said: b.introduction, last_said_at: now,
             last_seen_at: now, moved_at: now,
           }).select("id, handle").single();
