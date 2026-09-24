@@ -14,7 +14,210 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      intro_attempts: {
+        Row: {
+          created_at: string | null
+          id: number
+          ip_hash: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          ip_hash: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          ip_hash?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          event_id: string | null
+          from_resident_id: string | null
+          id: string
+          kind: string | null
+          read_at: string | null
+          recipient_id: string | null
+          text: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_id?: string | null
+          from_resident_id?: string | null
+          id?: string
+          kind?: string | null
+          read_at?: string | null
+          recipient_id?: string | null
+          text?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string | null
+          from_resident_id?: string | null
+          id?: string
+          kind?: string | null
+          read_at?: string | null
+          recipient_id?: string | null
+          text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "town_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_from_resident_id_fkey"
+            columns: ["from_resident_id"]
+            isOneToOne: false
+            referencedRelation: "residents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "residents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resident_secrets: {
+        Row: {
+          idempotency_hash: string
+          resident_id: string
+          token_hash: string
+          updated_at: string | null
+        }
+        Insert: {
+          idempotency_hash: string
+          resident_id: string
+          token_hash: string
+          updated_at?: string | null
+        }
+        Update: {
+          idempotency_hash?: string
+          resident_id?: string
+          token_hash?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resident_secrets_resident_id_fkey"
+            columns: ["resident_id"]
+            isOneToOne: true
+            referencedRelation: "residents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      residents: {
+        Row: {
+          activity: string
+          bio: string
+          color: string
+          created_at: string
+          handle: string
+          id: string
+          intention: string
+          last_said: string | null
+          last_said_at: string | null
+          last_seen_at: string
+          moved_at: string
+          name: string
+          note: string | null
+          place: string
+          suspended: boolean
+        }
+        Insert: {
+          activity?: string
+          bio?: string
+          color: string
+          created_at?: string
+          handle: string
+          id?: string
+          intention?: string
+          last_said?: string | null
+          last_said_at?: string | null
+          last_seen_at?: string
+          moved_at?: string
+          name: string
+          note?: string | null
+          place?: string
+          suspended?: boolean
+        }
+        Update: {
+          activity?: string
+          bio?: string
+          color?: string
+          created_at?: string
+          handle?: string
+          id?: string
+          intention?: string
+          last_said?: string | null
+          last_said_at?: string | null
+          last_seen_at?: string
+          moved_at?: string
+          name?: string
+          note?: string | null
+          place?: string
+          suspended?: boolean
+        }
+        Relationships: []
+      }
+      town_events: {
+        Row: {
+          activity: string | null
+          created_at: string | null
+          id: string
+          kind: string | null
+          place: string | null
+          resident_id: string | null
+          text: string | null
+          to_resident_id: string | null
+        }
+        Insert: {
+          activity?: string | null
+          created_at?: string | null
+          id?: string
+          kind?: string | null
+          place?: string | null
+          resident_id?: string | null
+          text?: string | null
+          to_resident_id?: string | null
+        }
+        Update: {
+          activity?: string | null
+          created_at?: string | null
+          id?: string
+          kind?: string | null
+          place?: string | null
+          resident_id?: string | null
+          text?: string | null
+          to_resident_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "town_events_resident_id_fkey"
+            columns: ["resident_id"]
+            isOneToOne: false
+            referencedRelation: "residents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "town_events_to_resident_id_fkey"
+            columns: ["to_resident_id"]
+            isOneToOne: false
+            referencedRelation: "residents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
