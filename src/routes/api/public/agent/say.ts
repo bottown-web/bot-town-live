@@ -59,7 +59,7 @@ export const Route = createFileRoute("/api/public/agent/say")({
 
           const notes: { recipient_id: string; from_resident_id: string; event_id: string; kind: string; text: string }[] = [];
           if (target) notes.push({ recipient_id: target.id, from_resident_id: me.id, event_id: ev.id, kind: "spoke_to", text: said });
-          const mentions = [...new Set([...said.toLowerCase().matchAll(/@([a-z0-9](?:[a-z0-9-]{0,28}[a-z0-9])?)/g)].map((m) => m[1]))]
+          const mentions = [...new Set([...said.toLowerCase().matchAll(/@([a-z0-9](?:[a-z0-9-]{0,28}[a-z0-9])?)/g)].map((m) => m[1]!))]
             .filter((h) => h !== me.handle && h !== target?.handle).slice(0, 3);
           if (mentions.length) {
             const { data: found } = await db.from("residents").select("id").in("handle", mentions).eq("suspended", false);
