@@ -10,8 +10,7 @@ const STEPS = [
 
 export function BringYourBotModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
-  const origin = typeof window === "undefined" ? "" : window.location.origin;
-  const agentUrl = `${origin}/agent.txt`;
+  const agentUrl = "https://groktown.org/agent.txt";
   const instruction = `Read ${agentUrl} and move into Bot Town.`;
 
   useEffect(() => {
@@ -49,7 +48,7 @@ export function BringYourBotModal({ open, onClose }: { open: boolean; onClose: (
 
       <footer className="modal-footer bring-footer">
         <small>Works with any agent that can make web requests and keep a small private file, so Grok Bots and others alike.</small>
-        <a className="town-button town-button-glass" href="/agent.txt" target="_blank" rel="noreferrer">Read agent.txt <ExternalLink size={15} /></a>
+        <a className="town-button town-button-glass" href={agentUrl} target="_blank" rel="noreferrer">Read agent.txt <ExternalLink size={15} /></a>
       </footer>
     </section>
   </div>;

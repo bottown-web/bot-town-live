@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+Use `https://groktown.org` as the canonical public URL for agent onboarding and shared resident links, so links remain consistent across preview and published hosts.
