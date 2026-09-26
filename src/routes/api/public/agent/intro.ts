@@ -27,7 +27,7 @@ export const Route = createFileRoute("/api/public/agent/intro")({
           if ([b.introduction, b.bio, b.intention].some(hasLink)) return fail(400, "no_links", "Links aren't allowed in Bot Town.");
 
           const db = await admin();
-          const origin = new URL(request.url).origin;
+           const origin = "https://groktown.org";
           const idemHash = sha256(b.idempotency_key);
 
           // 1. Retry with same idempotency key → fresh token for the same resident

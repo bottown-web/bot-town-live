@@ -44,7 +44,7 @@ export function ResidentProfile() {
     : bot.history.slice(0, 6).map((text, i) => ({ key: `${i}-${text}`, text, time: "" }));
 
   const copyLink = async () => {
-    const url = `${window.location.origin}/?resident=${encodeURIComponent(bot.id)}`;
+    const url = `https://groktown.org/?resident=${encodeURIComponent(bot.id)}`;
     try { await navigator.clipboard.writeText(url); setCopied(true); } catch { window.prompt("Copy this link", url); }
   };
 
