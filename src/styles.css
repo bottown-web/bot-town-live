@@ -239,6 +239,7 @@
 /* Brand */
 .brand-card { position: absolute; left: var(--hud-gap); top: var(--hud-gap); display: flex; align-items: center; gap: 1.1rem; padding: 1rem 1.4rem 1rem 1rem; min-width: 21.5rem; animation: rise-in .5s ease both; }
 .brand-avatar.has-ring { --size: 62px !important; border-radius: 1rem; background: oklch(0.95 0.05 95); }
+.brand-mark { width: 62px; height: 62px; flex: none; border-radius: 1rem; object-fit: contain; filter: drop-shadow(0 2px 6px oklch(0.2 0.02 260 / 0.25)); animation: rise-in .5s ease both; }
 .brand-avatar .online-dot { right: -3px; bottom: -3px; width: 16px; height: 16px; }
 .brand-copy { min-width: 0; }
 .brand-title { display: flex; align-items: center; gap: .8rem; }

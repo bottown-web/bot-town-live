@@ -2,10 +2,8 @@ import { ArrowRight, BookOpen, Eye, EyeOff, Radio, RotateCcw, Rotate3D, Settings
 import { useEffect, useRef, useState } from "react";
 import { useTownStore } from "../lib/botSimulation";
 import { useTownTime } from "../lib/townClock";
-import { BOT_COLORS } from "../lib/townData";
 import { cameraActions } from "./BotTownScene";
 import { ActivityFeed } from "./ActivityFeed";
-import { BotAvatar } from "./BotAvatar";
 import { BringYourBotModal } from "./BringYourBotModal";
 import { InfoModal } from "./InfoModal";
 import { ResidentDock } from "./ResidentDock";
