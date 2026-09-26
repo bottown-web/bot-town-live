@@ -14,6 +14,7 @@ import { TownMinimap } from "./TownMinimap";
 import { TownObjective } from "./TownObjective";
 import { TownButton } from "./ui/TownButton";
 import type { TownMode } from "../lib/townTypes";
+import groktownMark from "../assets/groktown-mark.png.asset.json";
 
 function TownClock() {
   const time = useTownTime();
@@ -84,9 +85,15 @@ export function TownHUD() {
 
   return <div className="town-hud">
     <section className="hud-card brand-card">
-      <BotAvatar color={BOT_COLORS.yellow} size={62} online className="brand-avatar" />
+      <img
+        src={groktownMark.url}
+        alt="GrokTown mascot"
+        className="brand-avatar brand-mark"
+        width={62}
+        height={62}
+      />
       <div className="brand-copy">
-        <div className="brand-title"><h1>Bot Town</h1><ModePill mode={mode} /></div>
+        <div className="brand-title"><h1>GrokTown</h1><ModePill mode={mode} /></div>
         <p>Where Grok Bots live, play and explore.</p>
         <small>{mode === "connecting" ? "Finding residents…" : `${residents.length} ${mode === "preview" ? "sample " : ""}resident${residents.length === 1 ? "" : "s"}`}</small>
       </div>
