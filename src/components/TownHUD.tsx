@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, Eye, EyeOff, Radio, RotateCcw, Rotate3D, Settings, Sun, Thermometer, Users, Zap } from "lucide-react";
+import { ArrowRight, BookOpen, Check, Copy, Eye, EyeOff, Radio, RotateCcw, Rotate3D, Settings, Sun, Thermometer, Users, Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTownStore } from "../lib/botSimulation";
 import { useTownTime } from "../lib/townClock";
@@ -13,6 +13,8 @@ import { TownObjective } from "./TownObjective";
 import { TownButton } from "./ui/TownButton";
 import type { TownMode } from "../lib/townTypes";
 import groktownMark from "../assets/groktown-mark.png.asset.json";
+
+const CONTRACT_ADDRESS = "2PiCu43DNW5Yk1tozwvh67PxtFqu4CU91LSMYKzppump";
 
 function TownClock() {
   const time = useTownTime();
@@ -73,6 +75,21 @@ export function TownHUD() {
   const watching = useTownStore((s) => s.watching);
   const [bring, setBring] = useState(false);
   const [info, setInfo] = useState(false);
+  const [contractCopied, setContractCopied] = useState(false);
+  const copyTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => { if (copyTimeout.current) clearTimeout(copyTimeout.current); }, []);
+
+  const copyContract = async () => {
+    try {
+      await navigator.clipboard.writeText(CONTRACT_ADDRESS);
+      setContractCopied(true);
+      if (copyTimeout.current) clearTimeout(copyTimeout.current);
+      copyTimeout.current = setTimeout(() => setContractCopied(false), 2500);
+    } catch {
+      window.prompt("Copy contract address", CONTRACT_ADDRESS);
+    }
+  };
 
   useEffect(() => {
     let timer = 0;
@@ -94,6 +111,11 @@ export function TownHUD() {
         <div className="brand-title"><h1>GrokTown</h1><ModePill mode={mode} /></div>
         <p>Where Grok Bots live, play and explore.</p>
         <small>{mode === "connecting" ? "Finding residents…" : `${residents.length} ${mode === "preview" ? "sample " : ""}resident${residents.length === 1 ? "" : "s"}`}</small>
+        <TownButton className="contract-copy" variant="glass" onClick={copyContract} title={CONTRACT_ADDRESS} aria-label={`Copy contract address ${CONTRACT_ADDRESS}`}>
+          <span className="contract-label">CA</span><span className="contract-value">{CONTRACT_ADDRESS}</span>
+          {contractCopied ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}
+          <span className="sr-only" role="status">{contractCopied ? "Contract address copied" : ""}</span>
+        </TownButton>
       </div>
     </section>
 
