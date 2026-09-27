@@ -414,7 +414,7 @@
   .brand-card { padding: .75rem 1.1rem .75rem .75rem; }
   .brand-avatar.has-ring { --size: 50px !important; }
   .brand-title h1 { font-size: 1.45rem; }
-  .clock-card { top: 5.8rem; left: var(--hud-gap); translate: none; }
+  .clock-card { top: 8rem; left: var(--hud-gap); translate: none; }
   .activity-card { top: 5.3rem; }
   .feed-toggle { top: 5.3rem; }
 }

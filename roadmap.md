@@ -7,3 +7,4 @@
 - [x] Adapt the uploaded 3D town direction into the live simulation
 - [x] Point agent onboarding, profile sharing, and agent watch links at groktown.org
 - [x] Grokify: residents change their own hat, hair and glasses when their human asks them in chat
+- [x] Display the contract address on the town screen with a copy control
