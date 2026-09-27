@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { useTownStore } from "../lib/botSimulation";
 import { hashString, locationById, routeBetween } from "../lib/townData";
 import type { BotResident, GroundPoint } from "../lib/townTypes";
+import { BotLook, lookTop } from "./BotLook3D";
 import { BeachBall, Bicycle, Book, CoffeeCup, PottedPlant } from "./TownProps";
 
 /** Residents are drawn a touch larger than life so they read clearly from the default camera. */
@@ -56,6 +57,10 @@ export function BotResident3D({ bot }: { bot: BotResident }) {
   const walking = bot.activity === "Walking";
   const onBike = walking && bot.cyclist;
   const seated = !walking && bot.currentLocation === "park" && SEATED.has(bot.activity);
+  /** Extra room above tall Grokify hats and hair for the beach ball and speech bubble. */
+  const headroom = Math.max(0, lookTop(bot.look) - 0.6);
+  const headroomRef = useRef(headroom);
+  headroomRef.current = headroom;
 
   useFrame(({ clock }, rawDelta) => {
     const group = ref.current;
@@ -119,13 +124,13 @@ export function BotResident3D({ bot }: { bot: BotResident }) {
       if (left) left.position.z = swing;
       if (right) right.position.z = -swing;
     }
-    if (ball.current) ball.current.position.y = 1.55 + (reduced ? 0 : Math.abs(Math.sin(t * 3)) * 0.45);
+    if (ball.current) ball.current.position.y = 1.55 + headroomRef.current + (reduced ? 0 : Math.abs(Math.sin(t * 3)) * 0.45);
   });
 
   const accessory = !walking && (() => {
     switch (bot.activity) {
       case "Reading": return <Book position={[0, 0.55, 0.62]} />;
-      case "Playing": return <group ref={ball} position={[0.28, 1.55, 0.25]}><BeachBall scale={0.9} /></group>;
+      case "Playing": return <group ref={ball} position={[0.28, 1.55 + headroom, 0.25]}><BeachBall scale={0.9} /></group>;
       case "Having coffee": return <CoffeeCup position={[0.52, 0.5, 0.32]} />;
       case "Shopping": return <PottedPlant position={[0, 0.02, 0.62]} scale={0.75} />;
       default: return null;
@@ -143,13 +148,14 @@ export function BotResident3D({ bot }: { bot: BotResident }) {
     </group>
     <group ref={body} position-y={0.55}>
       <BlobBody color={bot.accent} selected={selected} />
+      {bot.look && <BotLook look={bot.look} />}
       {accessory}
     </group>
     {selected && <mesh rotation-x={-Math.PI / 2} position-y={0.2}>
       <ringGeometry args={[0.72, 0.88, 40]} />
       <meshBasicMaterial color="#ffffff" transparent opacity={0.9} depthWrite={false} />
     </mesh>}
-    {(selected || bot.speech) && <Html position={[0, seated ? 2.2 : 1.8, 0]} center distanceFactor={20} zIndexRange={[8, 0]} style={{ pointerEvents: "none" }}>
+    {(selected || bot.speech) && <Html position={[0, (seated ? 2.2 : 1.8) + headroom, 0]} center distanceFactor={20} zIndexRange={[8, 0]} style={{ pointerEvents: "none" }}>
       <div className={selected && !bot.speech ? "bot-nameplate" : "speech-bubble"}>
         {selected && <b><i style={{ background: bot.accent }} />{bot.name}</b>}
         {bot.speech && <span>{bot.speech}</span>}
