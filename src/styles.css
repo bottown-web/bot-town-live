@@ -248,6 +248,10 @@
 .live-pill i { width: .6rem; height: .6rem; border-radius: 50%; background: var(--color-live); animation: live-pulse 2s infinite; }
 .brand-copy p { margin: .38rem 0 .15rem; font-size: .84rem; color: var(--color-ink-soft); }
 .brand-copy small { display: block; font-size: .92rem; font-weight: 600; color: var(--color-ink); }
+.contract-copy.town-button { display: flex; width: min(100%, 19rem); min-width: 0; height: 1.9rem; margin-top: .55rem; padding: 0 .5rem; gap: .45rem; border-radius: .45rem; font-size: .7rem; font-weight: 600; box-shadow: none; }
+.contract-copy .contract-label { flex: none; color: var(--color-ink-soft); font-weight: 800; }
+.contract-copy .contract-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, monospace; }
+.contract-copy svg { flex: none; margin-left: auto; }
 
 /* Time & weather */
 .clock-card { position: absolute; top: calc(var(--hud-gap) - .45rem); left: 50%; translate: -50% 0; display: flex; align-items: center; gap: .85rem; padding: .7rem 1.6rem; animation: rise-in .5s .05s ease both; }
@@ -410,7 +414,7 @@
   .brand-card { padding: .75rem 1.1rem .75rem .75rem; }
   .brand-avatar.has-ring { --size: 50px !important; }
   .brand-title h1 { font-size: 1.45rem; }
-  .clock-card { top: 5.8rem; left: var(--hud-gap); translate: none; }
+  .clock-card { top: 8rem; left: var(--hud-gap); translate: none; }
   .activity-card { top: 5.3rem; }
   .feed-toggle { top: 5.3rem; }
 }
@@ -427,15 +431,15 @@
   .watching-pill { display: none; }
   .town-button { height: 2.6rem; padding: 0 .9rem; font-size: .86rem; border-radius: .85rem; }
   .town-button-icon { width: 2.6rem; padding: 0; }
-  .clock-card { top: 5.1rem; gap: .55rem; padding: .45rem .9rem; }
+  .clock-card { top: 6.5rem; gap: .55rem; padding: .45rem .9rem; }
   .clock-sun, .clock-temp { width: 22px; height: 22px; }
   .clock-block { min-width: 0; }
   .clock-block span { font-size: .72rem; }
   .clock-block strong { font-size: .9rem; }
   .clock-divider { height: 1.8rem; margin: 0 .2rem; }
-  .activity-card { top: 9rem; left: auto; width: min(19rem, calc(100vw - 1.5rem)); max-height: 13rem; padding: .7rem .5rem .5rem; }
+  .activity-card { top: 10.3rem; left: auto; width: min(19rem, calc(100vw - 1.5rem)); max-height: 13rem; padding: .7rem .5rem .5rem; }
   .activity-card:not(.is-expanded) .activity-list li:nth-child(n + 3) { display: none; }
-  .activity-card.is-expanded { max-height: calc(100vh - 9rem - 12rem); }
+  .activity-card.is-expanded { max-height: calc(100vh - 10.3rem - 12rem); }
   .card-header { padding-bottom: .5rem; }
   .card-header h2 { font-size: .95rem; }
   .activity-item { padding: .45rem .55rem; }
@@ -461,6 +465,8 @@
   .bring-full { display: none; }
   .bring-short { display: inline; }
   .brand-card { max-width: calc(100vw - 2 * var(--hud-gap) - 9rem); padding-right: .75rem; }
+  .brand-mark { width: 38px; height: 38px; }
+  .contract-copy.town-button { width: 100%; margin-top: .3rem; }
   .brand-avatar.has-ring { --size: 38px !important; }
   .brand-title h1 { font-size: 1.08rem; }
   .live-pill { font-size: .6rem; gap: .25rem; padding: .16rem .42rem; }
