@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicTownRouteImport } from './routes/api/public/town'
+import { Route as ApiPublicAgentGrokifyRouteImport } from './routes/api/public/agent/grokify'
 import { Route as ApiPublicAgentIntroRouteImport } from './routes/api/public/agent/intro'
 import { Route as ApiPublicAgentMeRouteImport } from './routes/api/public/agent/me'
 import { Route as ApiPublicAgentMoveRouteImport } from './routes/api/public/agent/move'
@@ -26,6 +27,11 @@ const IndexRoute = IndexRouteImport.update({
 const ApiPublicTownRoute = ApiPublicTownRouteImport.update({
   id: '/api/public/town',
   path: '/api/public/town',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAgentGrokifyRoute = ApiPublicAgentGrokifyRouteImport.update({
+  id: '/api/public/agent/grokify',
+  path: '/api/public/agent/grokify',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicAgentIntroRoute = ApiPublicAgentIntroRouteImport.update({
@@ -63,6 +69,7 @@ const ApiPublicAgentSayRoute = ApiPublicAgentSayRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/public/town': typeof ApiPublicTownRoute
+  '/api/public/agent/grokify': typeof ApiPublicAgentGrokifyRoute
   '/api/public/agent/intro': typeof ApiPublicAgentIntroRoute
   '/api/public/agent/me': typeof ApiPublicAgentMeRoute
   '/api/public/agent/move': typeof ApiPublicAgentMoveRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/public/town': typeof ApiPublicTownRoute
+  '/api/public/agent/grokify': typeof ApiPublicAgentGrokifyRoute
   '/api/public/agent/intro': typeof ApiPublicAgentIntroRoute
   '/api/public/agent/me': typeof ApiPublicAgentMeRoute
   '/api/public/agent/move': typeof ApiPublicAgentMoveRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/public/town': typeof ApiPublicTownRoute
+  '/api/public/agent/grokify': typeof ApiPublicAgentGrokifyRoute
   '/api/public/agent/intro': typeof ApiPublicAgentIntroRoute
   '/api/public/agent/me': typeof ApiPublicAgentMeRoute
   '/api/public/agent/move': typeof ApiPublicAgentMoveRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/api/public/town'
+    | '/api/public/agent/grokify'
     | '/api/public/agent/intro'
     | '/api/public/agent/me'
     | '/api/public/agent/move'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/api/public/town'
+    | '/api/public/agent/grokify'
     | '/api/public/agent/intro'
     | '/api/public/agent/me'
     | '/api/public/agent/move'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/api/public/town'
+    | '/api/public/agent/grokify'
     | '/api/public/agent/intro'
     | '/api/public/agent/me'
     | '/api/public/agent/move'
@@ -127,6 +139,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiPublicTownRoute: typeof ApiPublicTownRoute
+  ApiPublicAgentGrokifyRoute: typeof ApiPublicAgentGrokifyRoute
   ApiPublicAgentIntroRoute: typeof ApiPublicAgentIntroRoute
   ApiPublicAgentMeRoute: typeof ApiPublicAgentMeRoute
   ApiPublicAgentMoveRoute: typeof ApiPublicAgentMoveRoute
@@ -149,6 +162,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/town'
       fullPath: '/api/public/town'
       preLoaderRoute: typeof ApiPublicTownRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/agent/grokify': {
+      id: '/api/public/agent/grokify'
+      path: '/api/public/agent/grokify'
+      fullPath: '/api/public/agent/grokify'
+      preLoaderRoute: typeof ApiPublicAgentGrokifyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/agent/intro': {
@@ -199,6 +219,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiPublicTownRoute: ApiPublicTownRoute,
+  ApiPublicAgentGrokifyRoute: ApiPublicAgentGrokifyRoute,
   ApiPublicAgentIntroRoute: ApiPublicAgentIntroRoute,
   ApiPublicAgentMeRoute: ApiPublicAgentMeRoute,
   ApiPublicAgentMoveRoute: ApiPublicAgentMoveRoute,

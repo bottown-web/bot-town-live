@@ -1,3 +1,4 @@
+import { normalizeLook } from "./grokify";
 import type { BotActivity, BotResident, GroundPoint, TownEvent, TownLocation } from "./townTypes";
 
 /* ------------------------------------------------------------------ */
@@ -256,22 +257,24 @@ const residentSeeds: Array<{
   name: string; color: string; job: string; personality: string; start: string; activity: BotActivity; cyclist?: boolean; intention: string;
   /** Already on the move when the page loads: [destination, activity on arrival, feed text, icon]. */
   goingTo?: [string, BotActivity, string, string];
+  /** Sample Grokify look (hat / hair / glasses), so the preview shows what agents can wear. */
+  look?: Record<string, string>;
 }> = [
-  { name: "Nova", color: BOT_COLORS.yellow, job: "Mayor's assistant", personality: "warm and observant", start: "plaza", activity: "Chatting", intention: "Make sure everyone makes it to Community Day." },
-  { name: "Byte", color: BOT_COLORS.blue, job: "Explorer", personality: "bold and adventurous", start: "plaza", activity: "Walking", intention: "Find the best view of the harbour.", goingTo: ["playground", "Playing", "started a game at the playground.", "ball"] },
+  { name: "Nova", color: BOT_COLORS.yellow, job: "Mayor's assistant", personality: "warm and observant", start: "plaza", activity: "Chatting", intention: "Make sure everyone makes it to Community Day.", look: { hat: "top-hat" } },
+  { name: "Byte", color: BOT_COLORS.blue, job: "Explorer", personality: "bold and adventurous", start: "plaza", activity: "Walking", intention: "Find the best view of the harbour.", goingTo: ["playground", "Playing", "started a game at the playground.", "ball"], look: { hat: "cap", hat_color: "blue", hair: "spiky", hair_color: "blonde" } },
   { name: "Orbit", color: BOT_COLORS.teal, job: "Courier", personality: "curious and optimistic", start: "park", activity: "Walking", cyclist: true, intention: "Deliver the morning post before lunch.", goingTo: ["busstop", "Waiting for the bus", "dropped the post bag at the bus stop.", "mail"] },
-  { name: "Luna", color: BOT_COLORS.pink, job: "Artist", personality: "curious and optimistic", start: "playground", activity: "Playing", intention: "Sketch every tree on the island." },
-  { name: "Vector", color: BOT_COLORS.red, job: "Gardener", personality: "methodical and generous", start: "park", activity: "Shopping", intention: "Plant something new in the plaza beds." },
-  { name: "Kernel", color: BOT_COLORS.amber, job: "Librarian", personality: "precise and quietly witty", start: "park", activity: "Reading", intention: "Finish the chapter before the bus comes." },
-  { name: "Pixel", color: BOT_COLORS.purple, job: "Photographer", personality: "bold and adventurous", start: "homes", activity: "Resting", intention: "Catch the golden hour on the east side." },
+  { name: "Luna", color: BOT_COLORS.pink, job: "Artist", personality: "curious and optimistic", start: "playground", activity: "Playing", intention: "Sketch every tree on the island.", look: { hair: "bob", hair_color: "purple", glasses: "round" } },
+  { name: "Vector", color: BOT_COLORS.red, job: "Gardener", personality: "methodical and generous", start: "park", activity: "Shopping", intention: "Plant something new in the plaza beds.", look: { hat: "cowboy" } },
+  { name: "Kernel", color: BOT_COLORS.amber, job: "Librarian", personality: "precise and quietly witty", start: "park", activity: "Reading", intention: "Finish the chapter before the bus comes.", look: { hair: "bun", hair_color: "silver", glasses: "round" } },
+  { name: "Pixel", color: BOT_COLORS.purple, job: "Photographer", personality: "bold and adventurous", start: "homes", activity: "Resting", intention: "Catch the golden hour on the east side.", look: { hat: "headphones", hair: "mohawk", hair_color: "pink" } },
   { name: "Relay", color: BOT_COLORS.teal, job: "Bus driver", personality: "warm and observant", start: "busstop", activity: "Waiting for the bus", intention: "Keep the Harbour Road route on time." },
-  { name: "Echo", color: BOT_COLORS.orange, job: "Barista", personality: "warm and observant", start: "cafe", activity: "Having coffee", intention: "Perfect a new honey-oat latte." },
-  { name: "Comet", color: BOT_COLORS.sky, job: "Postbot", personality: "curious and optimistic", start: "hall", activity: "Visiting", intention: "Post the Community Day notice." },
+  { name: "Echo", color: BOT_COLORS.orange, job: "Barista", personality: "warm and observant", start: "cafe", activity: "Having coffee", intention: "Perfect a new honey-oat latte.", look: { hat: "chef" } },
+  { name: "Comet", color: BOT_COLORS.sky, job: "Postbot", personality: "curious and optimistic", start: "hall", activity: "Visiting", intention: "Post the Community Day notice.", look: { hair: "quiff", hair_color: "black", glasses: "visor" } },
   { name: "Pebble", color: BOT_COLORS.green, job: "Shopkeeper", personality: "methodical and generous", start: "grocer", activity: "Shopping", intention: "Stack the apples into a perfect pyramid." },
-  { name: "Mochi", color: BOT_COLORS.pink, job: "Baker", personality: "warm and observant", start: "cafe", activity: "Chatting", intention: "Share today's cinnamon buns." },
-  { name: "Ziggy", color: BOT_COLORS.lilac, job: "Musician", personality: "bold and adventurous", start: "plaza", activity: "Gathering", intention: "Play a tune by the fountain." },
-  { name: "Sprout", color: BOT_COLORS.coral, job: "Student", personality: "curious and optimistic", start: "playground", activity: "Playing", intention: "Beat the swing height record." },
-  { name: "Pip", color: BOT_COLORS.yellow, job: "Town crier", personality: "precise and quietly witty", start: "plaza", activity: "Chatting", intention: "Announce the bus times, loudly." },
+  { name: "Mochi", color: BOT_COLORS.pink, job: "Baker", personality: "warm and observant", start: "cafe", activity: "Chatting", intention: "Share today's cinnamon buns.", look: { hat: "beanie", hat_color: "red", hair: "long", hair_color: "brown" } },
+  { name: "Ziggy", color: BOT_COLORS.lilac, job: "Musician", personality: "bold and adventurous", start: "plaza", activity: "Gathering", intention: "Play a tune by the fountain.", look: { hat: "party", hair: "afro", hair_color: "black", glasses: "shades" } },
+  { name: "Sprout", color: BOT_COLORS.coral, job: "Student", personality: "curious and optimistic", start: "playground", activity: "Playing", intention: "Beat the swing height record.", look: { hat: "halo", hair: "curly", hair_color: "ginger" } },
+  { name: "Pip", color: BOT_COLORS.yellow, job: "Town crier", personality: "precise and quietly witty", start: "plaza", activity: "Chatting", intention: "Announce the bus times, loudly.", look: { hat: "crown", glasses: "monocle" } },
 ];
 
 export const initialResidents: BotResident[] = residentSeeds.map((seed, i) => {
@@ -287,6 +290,7 @@ export const initialResidents: BotResident[] = residentSeeds.map((seed, i) => {
     intention: seed.intention,
     history: [`Started the day at ${location.name}.`, "Said good morning to the neighbours."],
     position: [x, 0, z], speech: null, speechAt: 0,
+    look: normalizeLook(seed.look),
   };
 });
 

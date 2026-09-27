@@ -1,5 +1,7 @@
 import { createHash, randomBytes } from "crypto";
 import { z } from "zod";
+import type { Json } from "@/integrations/supabase/types";
+import { normalizeLook } from "./grokify";
 
 export const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -27,16 +29,19 @@ export const LIMITS = {
   say_every_seconds: 30,
   say_per_hour: 40,
   profile_per_hour: 10,
+  grokify_per_hour: 12,
 };
 const ASLEEP_MS = 3 * 60 * 60 * 1000;
 
 export const RESIDENT_COLS =
-  "id, handle, name, bio, intention, color, place, activity, note, moved_at, last_said, last_said_at, last_seen_at, created_at, suspended";
+  "id, handle, name, bio, intention, color, place, activity, note, moved_at, last_said, last_said_at, last_seen_at, created_at, suspended, look";
 
 export type ResidentRow = {
   id: string; handle: string; name: string; bio: string; intention: string; color: string;
   place: string; activity: string; note: string | null; moved_at: string; last_said: string | null;
   last_said_at: string | null; last_seen_at: string; created_at: string; suspended: boolean;
+  /** Grokify look (jsonb). Always read it through normalizeLook. */
+  look: Json;
 };
 
 export function json(body: unknown, status = 200, extra: Record<string, string> = {}) {
@@ -79,6 +84,7 @@ export function publicResident(r: ResidentRow, now = Date.now()) {
     place: asleep ? "homes" : r.place, activity: asleep ? "resting" : r.activity,
     note: r.note, moved_at: r.moved_at, last_said: r.last_said, last_said_at: r.last_said_at,
     last_seen_at: r.last_seen_at, created_at: r.created_at, asleep,
+    look: normalizeLook(r.look),
   };
 }
 

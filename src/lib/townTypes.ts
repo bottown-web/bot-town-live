@@ -1,3 +1,5 @@
+import type { Look } from "./grokify";
+
 export type BotActivity =
   | "Idle"
   | "Walking"
@@ -65,6 +67,8 @@ export interface BotResident {
   bio?: string;
   joinedAt?: number;
   lastSeenAt?: number;
+  /** Grokify look: hat, hair and glasses. Only the resident's own agent can change it. */
+  look?: Look;
 }
 
 export interface TownEvent {

@@ -44,13 +44,15 @@ export interface LiveResident {
   last_seen_at: string;
   created_at: string;
   asleep: boolean;
+  /** Grokify look. Read it through normalizeLook; older servers leave it out. */
+  look?: unknown;
 }
 
 export interface LiveEvent {
   id: string;
   handle: string;
   name: string;
-  kind: "arrived" | "moved" | "said" | "profile";
+  kind: "arrived" | "moved" | "said" | "profile" | "grokified";
   text: string | null;
   place: string | null;
   activity: string | null;

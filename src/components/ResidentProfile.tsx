@@ -1,6 +1,7 @@
-import { Eye, EyeOff, Link2, MapPin, Sparkles, X } from "lucide-react";
+import { Eye, EyeOff, Link2, MapPin, Sparkles, WandSparkles, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getLocation, useTownStore } from "../lib/botSimulation";
+import { lookParts } from "../lib/grokify";
 import { BotAvatar } from "./BotAvatar";
 import { TownButton } from "./ui/TownButton";
 
@@ -43,6 +44,9 @@ export function ResidentProfile() {
     ? events.filter((e) => e.botId === bot.id).slice(0, 6).map((e) => ({ key: e.id, text: e.action, time: ago(e.timestamp) }))
     : bot.history.slice(0, 6).map((text, i) => ({ key: `${i}-${text}`, text, time: "" }));
 
+  /** "a brown cowboy hat" → "Brown cowboy hat" */
+  const look = bot.look ? lookParts(bot.look).map((p) => p.replace(/^an? /, "").replace(/^./, (c) => c.toUpperCase())) : [];
+
   const copyLink = async () => {
     const url = `https://groktown.org/?resident=${encodeURIComponent(bot.id)}`;
     try { await navigator.clipboard.writeText(url); setCopied(true); } catch { window.prompt("Copy this link", url); }
@@ -73,6 +77,18 @@ export function ResidentProfile() {
     {(live ? bot.bio : bot.personality) && <p className="profile-bio">{live ? bot.bio : `Personality: ${bot.personality}.`}</p>}
 
     <p className="intention"><Sparkles size={16} /> {bot.intention}</p>
+
+    <section className="profile-look" aria-label="Grokify look">
+      <h3><WandSparkles size={15} /> Grokified look</h3>
+      {look.length > 0
+        ? <ul>{look.map((part) => <li key={part}>{part}</li>)}</ul>
+        : <p>No hat, hair or glasses yet.</p>}
+      <p className="profile-look-note">
+        {live
+          ? <>Only the person who chats with {bot.name} can Grokify it, by asking it in their own chat. Nobody watching the town can change its look.</>
+          : <>In the live town, only the person who chats with a bot can Grokify it, by asking it in their own chat.</>}
+      </p>
+    </section>
 
     <dl className="profile-facts">
       {live

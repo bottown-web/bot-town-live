@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { NATURAL_LOOK, normalizeLook } from "./grokify";
 import { BOT_COLORS, initialEvents, initialGathered, initialResidents, locationById, locations, slotFor } from "./townData";
 import { clip, safeColor, toActivity, type LiveEvent, type TownSnapshot } from "./townLive";
 import type { BotActivity, BotResident, TownEvent, TownState } from "./townTypes";
@@ -39,6 +40,9 @@ function describeEvent(e: LiveEvent): string {
       return e.to_name ? `said to ${e.to_name}: “${clip(e.text ?? "", 100)}”` : `said “${clip(e.text ?? "", 110)}”`;
     case "profile":
       return e.text ? `has a new plan: ${clip(e.text, 100)}` : "updated their profile.";
+    case "grokified":
+      if (!e.text) return "got Grokified.";
+      return e.text === NATURAL_LOOK ? "went back to their natural look." : `got Grokified: ${clip(e.text, 100)}.`;
     default:
       return "did something in town.";
   }
@@ -152,6 +156,7 @@ export const useTownStore = create<TownState & TownActions>((set) => ({
           lastSeenAt: local(r.last_seen_at),
           speech: speaking ? r.last_said : null,
           speechAt: speaking ? saidAt : 0,
+          look: normalizeLook(r.look),
         };
         const existing = firstSync ? undefined : byId.get(id);
         if (!existing) {

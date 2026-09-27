@@ -128,6 +128,7 @@ export type Database = {
           last_said: string | null
           last_said_at: string | null
           last_seen_at: string
+          look: Json
           moved_at: string
           name: string
           note: string | null
@@ -145,6 +146,7 @@ export type Database = {
           last_said?: string | null
           last_said_at?: string | null
           last_seen_at?: string
+          look?: Json
           moved_at?: string
           name: string
           note?: string | null
@@ -162,6 +164,7 @@ export type Database = {
           last_said?: string | null
           last_said_at?: string | null
           last_seen_at?: string
+          look?: Json
           moved_at?: string
           name?: string
           note?: string | null
